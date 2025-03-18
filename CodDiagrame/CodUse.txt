@@ -1,0 +1,36 @@
+@startuml "Diagrama Use Case cu 5 Tipuri de Autentificare"
+left to right direction
+:Administrator: as Admin
+:Recepționist: as Receptionist
+
+rectangle "Sistem MedCare" {
+  ' 5 tipuri de autentificare
+  usecase "Autentificare Administrator" as UC0_Admin
+  usecase "Autentificare Recepționist" as UC0_Rec
+
+  
+  ' Cazuri de utilizare Administrator
+  usecase "Gestionarea Personalului Medical" as UC2
+  usecase "Administrarea Serviciilor Medicale" as UC3
+  usecase "Generarea Rapoartelor și Statisticilor" as UC5
+  
+  ' Cazuri de utilizare Recepționist
+  usecase "Înregistrarea Programărilor Pacienților" as UC1
+  usecase "Actualizarea și Monitorizarea Statusului Programărilor" as UC4
+  
+  
+  UC0_Admin --> UC2
+  UC0_Admin --> UC3
+  UC0_Admin --> UC5
+  
+  UC0_Rec --> UC1
+  UC0_Rec --> UC4
+
+}
+
+Admin -- UC0_Admin
+Receptionist -- UC0_Rec
+
+
+
+@enduml

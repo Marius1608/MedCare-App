@@ -1,0 +1,464 @@
+@startuml MedCare Appointment System
+
+!define Interface(name) class name << interface >>
+!define Abstract(name) abstract class name
+
+package "View Layer" {
+  class LoginView {
+    - usernameField: JTextField
+    - passwordField: JPasswordField
+    - loginButton: JButton
+    - errorLabel: JLabel
+    - mainPanel: JPanel
+    + LoginView()
+    + displayErrorMessage(message): void
+    + getUsernameField(): JTextField
+    + getPasswordField(): JPasswordField
+    + addLoginButtonListener(listener): void
+  }
+  
+  class AdminDashboardView {
+    - tabbedPane: JTabbedPane
+    - userManagementPanel: JPanel
+    - doctorManagementPanel: JPanel
+    - serviceManagementPanel: JPanel
+    - reportsPanel: JPanel
+    - userButton: JButton
+    - doctorButton: JButton
+    - serviceButton: JButton
+    - reportButton: JButton
+    + AdminDashboardView()
+    + displayUserManagementPanel(): void
+    + displayDoctorManagementPanel(): void
+    + displayServiceManagementPanel(): void
+    + displayReportsPanel(): void
+    + addMenuButtonListeners(listeners): void
+  }
+  
+  class ReceptionistDashboardView {
+    - mainPanel: JPanel
+    - appointmentButton: JButton
+    - appointmentPanel: JPanel
+    + ReceptionistDashboardView()
+    + displayAppointmentManagementPanel(): void
+    + addMenuButtonListeners(listeners): void
+  }
+  
+  class UserManagementView {
+    - userTable: JTable
+    - userTableModel: DefaultTableModel
+    - nameField: JTextField
+    - usernameField: JTextField
+    - passwordField: JPasswordField
+    - roleComboBox: JComboBox<UserRole>
+    - addButton: JButton
+    - updateButton: JButton
+    - deleteButton: JButton
+    - scrollPane: JScrollPane
+    - formPanel: JPanel
+    + UserManagementView()
+    + displayUserForm(): void
+    + displayUserList(): void
+    + getUserFormData(): User
+    + addCreateUserButtonListener(listener): void
+    + addUpdateUserButtonListener(listener): void
+    + addDeleteUserButtonListener(listener): void
+    + refreshUserList(users: List<User>): void
+  }
+  
+  class DoctorManagementView {
+    - doctorTable: JTable
+    - doctorTableModel: DefaultTableModel
+    - nameField: JTextField
+    - specializationField: JTextField
+    - workHoursField: JTextField
+    - addButton: JButton
+    - updateButton: JButton
+    - deleteButton: JButton
+    - scrollPane: JScrollPane
+    - formPanel: JPanel
+    + DoctorManagementView()
+    + displayDoctorForm(): void
+    + displayDoctorList(): void
+    + getDoctorFormData(): Doctor
+    + addCreateDoctorButtonListener(listener): void
+    + addUpdateDoctorButtonListener(listener): void
+    + addDeleteDoctorButtonListener(listener): void
+    + refreshDoctorList(doctors: List<Doctor>): void
+  }
+  
+  class ServiceManagementView {
+    - serviceTable: JTable
+    - serviceTableModel: DefaultTableModel
+    - nameField: JTextField
+    - priceField: JTextField
+    - durationField: JTextField
+    - addButton: JButton
+    - updateButton: JButton
+    - deleteButton: JButton
+    - scrollPane: JScrollPane
+    - formPanel: JPanel
+    + ServiceManagementView()
+    + displayServiceForm(): void
+    + displayServiceList(): void
+    + getServiceFormData(): MedicalService
+    + addCreateServiceButtonListener(listener): void
+    + addUpdateServiceButtonListener(listener): void
+    + addDeleteServiceButtonListener(listener): void
+    + refreshServiceList(services: List<MedicalService>): void
+  }
+  
+  class AppointmentManagementView {
+    - appointmentTable: JTable
+    - appointmentTableModel: DefaultTableModel
+    - patientNameField: JTextField
+    - doctorComboBox: JComboBox<Doctor>
+    - dateChooser: JDateChooser
+    - timeSpinner: JSpinner
+    - serviceComboBox: JComboBox<MedicalService>
+    - statusComboBox: JComboBox<AppointmentStatus>
+    - createButton: JButton
+    - updateStatusButton: JButton
+    - scrollPane: JScrollPane
+    - formPanel: JPanel
+    + AppointmentManagementView()
+    + displayAppointmentForm(): void
+    + displayAppointmentList(): void
+    + getAppointmentFormData(): Appointment
+    + populateDoctorComboBox(doctors: List<Doctor>): void
+    + populateServiceComboBox(services: List<MedicalService>): void
+    + addCreateAppointmentButtonListener(listener): void
+    + addUpdateAppointmentStatusButtonListener(listener): void
+    + refreshAppointmentList(appointments: List<Appointment>): void
+  }
+  
+  class ReportView {
+    - startDateChooser: JDateChooser
+    - endDateChooser: JDateChooser
+    - generateButton: JButton
+    - exportCSVButton: JButton
+    - exportXMLButton: JButton
+    - reportTable: JTable
+    - reportTableModel: DefaultTableModel
+    - chartPanel: JPanel
+    - doctorChartPanel: JPanel
+    - serviceChartPanel: JPanel
+    - fileChooser: JFileChooser
+    - scrollPane: JScrollPane
+    - controlPanel: JPanel
+    + ReportView()
+    + displayDateRangeSelector(): void
+    + displayReportTable(): void
+    + displayExportOptions(): void
+    + getStartDate(): Date
+    + getEndDate(): Date
+    + addGenerateReportButtonListener(listener): void
+    + addExportToCSVButtonListener(listener): void
+    + addExportToXMLButtonListener(listener): void
+    + displayReport(report: Report): void
+    + createBarChart(data: Map<String, Integer>, title: String): JFreeChart
+  }
+}
+
+package "Controller Layer" {
+  class LoginController {
+    - loginView: LoginView
+    - userService: UserService
+    + initialize(): void
+    - handleLogin(): void
+    - showAppropriateView(user: User): void
+  }
+  
+  class AdminDashboardController {
+    - adminDashboardView: AdminDashboardView
+    - userController: UserManagementController
+    - doctorController: DoctorManagementController
+    - serviceController: ServiceManagementController
+    - reportController: ReportController
+    + initialize(): void
+    - handleMenuSelection(): void
+  }
+  
+  class ReceptionistDashboardController {
+    - receptionistDashboardView: ReceptionistDashboardView
+    - appointmentController: AppointmentManagementController
+    + initialize(): void
+    - handleMenuSelection(): void
+  }
+  
+  class UserManagementController {
+    - userManagementView: UserManagementView
+    - userService: UserService
+    + initialize(): void
+    - handleCreateUser(): void
+    - handleUpdateUser(): void
+    - handleDeleteUser(): void
+    - refreshUserList(): void
+    - validateUserData(user: User): boolean
+  }
+  
+  class DoctorManagementController {
+    - doctorManagementView: DoctorManagementView
+    - doctorService: DoctorService
+    + initialize(): void
+    - handleCreateDoctor(): void
+    - handleUpdateDoctor(): void
+    - handleDeleteDoctor(): void
+    - refreshDoctorList(): void
+    - validateDoctorData(doctor: Doctor): boolean
+  }
+  
+  class ServiceManagementController {
+    - serviceManagementView: ServiceManagementView
+    - medicalServiceService: MedicalServiceService
+    + initialize(): void
+    - handleCreateService(): void
+    - handleUpdateService(): void
+    - handleDeleteService(): void
+    - refreshServiceList(): void
+    - validateServiceData(service: MedicalService): boolean
+  }
+  
+  class AppointmentManagementController {
+    - appointmentManagementView: AppointmentManagementView
+    - appointmentService: AppointmentService
+    - doctorService: DoctorService
+    - medicalServiceService: MedicalServiceService
+    + initialize(): void
+    - loadDoctorsAndServices(): void
+    - handleCreateAppointment(): void
+    - handleUpdateAppointmentStatus(): void
+    - refreshAppointmentList(): void
+    - checkDoctorAvailability(doctorId, dateTime, duration): boolean
+    - validateAppointmentData(appointment: Appointment): boolean
+  }
+  
+  class ReportController {
+    - reportView: ReportView
+    - appointmentService: AppointmentService
+    + initialize(): void
+    - handleGenerateReport(): void
+    - handleExportToCSV(): void
+    - handleExportToXML(): void
+    - generateReportData(startDate, endDate): Report
+    - validateDateRange(startDate, endDate): boolean
+  }
+}
+
+package "Business Logic Layer" {
+  Interface(IService) {
+    + create(entity): T
+    + update(entity): T
+    + delete(id): boolean
+    + getById(id): T
+    + getAll(): List<T>
+  }
+  
+  class UserService {
+    - userDAO: UserDAO
+    + authenticate(username, password): User
+    + encryptPassword(password): String
+  }
+  
+  class DoctorService {
+    - doctorDAO: DoctorDAO
+    + checkAvailability(doctorId, dateTime, duration): boolean
+  }
+  
+  class MedicalServiceService {
+    - medicalServiceDAO: MedicalServiceDAO
+  }
+  
+  class AppointmentService {
+    - appointmentDAO: AppointmentDAO
+    - doctorService: DoctorService
+    + getAppointmentsByDateRange(start, end): List<Appointment>
+    + getMostRequestedDoctors(): Map<Doctor, Integer>
+    + getMostRequestedServices(): Map<MedicalService, Integer>
+  }
+  
+  class Report {
+    - appointments: List<Appointment>
+    - doctorStatistics: Map<Doctor, Integer>
+    - serviceStatistics: Map<MedicalService, Integer>
+    - startDate: Date
+    - endDate: Date
+    + Report(appointments, startDate, endDate)
+    + calculateStatistics(): void
+  }
+  
+  UserService ..|> IService
+  DoctorService ..|> IService
+  MedicalServiceService ..|> IService
+  AppointmentService ..|> IService
+}
+
+package "Data Access Layer" {
+  Abstract(AbstractDAO) {
+    # connection: Connection
+    # createConnection(): Connection
+    # closeConnection(conn): void
+    + insert(entity: T): T
+    + update(entity: T): T
+    + delete(id: int): boolean
+    + findById(id: int): T
+    + findAll(): List<T>
+  }
+  
+  class UserDAO {
+    + insert(user: User): User
+    + update(user: User): User
+    + delete(id: int): boolean
+    + findById(id: int): User
+    + findAll(): List<User>
+    + findByUsername(username: String): User
+  }
+  
+  class DoctorDAO {
+    + insert(doctor: Doctor): Doctor
+    + update(doctor: Doctor): Doctor
+    + delete(id: int): boolean
+    + findById(id: int): Doctor
+    + findAll(): List<Doctor>
+    + findBySpecialization(specialization: String): List<Doctor>
+  }
+  
+  class MedicalServiceDAO {
+    + insert(service: MedicalService): MedicalService
+    + update(service: MedicalService): MedicalService
+    + delete(id: int): boolean
+    + findById(id: int): MedicalService
+    + findAll(): List<MedicalService>
+  }
+  
+  class AppointmentDAO {
+    + insert(appointment: Appointment): Appointment
+    + update(appointment: Appointment): Appointment
+    + delete(id: int): boolean
+    + findById(id: int): Appointment
+    + findAll(): List<Appointment>
+    + findByDateRange(start: Date, end: Date): List<Appointment>
+    + findByDoctor(doctorId: int): List<Appointment>
+    + findByStatus(status: AppointmentStatus): List<Appointment>
+  }
+
+  AbstractDAO <|-- UserDAO
+  AbstractDAO <|-- DoctorDAO
+  AbstractDAO <|-- MedicalServiceDAO
+  AbstractDAO <|-- AppointmentDAO
+}
+
+package "Data Layer" {
+  class User {
+    - id: int
+    - name: String
+    - username: String
+    - password: String
+    - role: UserRole
+    + User()
+    + User(id, name, username, password, role)
+    + getters/setters
+  }
+  
+  enum UserRole {
+    ADMIN
+    RECEPTIONIST
+  }
+  
+  class Doctor {
+    - id: int
+    - name: String
+    - specialization: String
+    - workHours: String
+    + Doctor()
+    + Doctor(id, name, specialization, workHours)
+    + getters/setters
+    + toString(): String
+  }
+  
+  class MedicalService {
+    - id: int
+    - name: String
+    - price: double
+    - duration: int
+    + MedicalService()
+    + MedicalService(id, name, price, duration)
+    + getters/setters
+    + toString(): String
+  }
+  
+  class Appointment {
+    - id: int
+    - patientName: String
+    - doctor: Doctor
+    - dateTime: Date
+    - service: MedicalService
+    - status: AppointmentStatus
+    + Appointment()
+    + Appointment(id, patientName, doctor, dateTime, service, status)
+    + getters/setters
+  }
+  
+  enum AppointmentStatus {
+    NEW
+    IN_PROGRESS
+    COMPLETED
+  }
+  
+  class Database {
+    - connection: Connection
+    + connect(): Connection
+    + disconnect(conn): void
+    + executeQuery(query): ResultSet
+    + executeUpdate(query): int
+  }
+  
+  User -- UserRole
+  Appointment -- AppointmentStatus
+  Appointment -- Doctor
+  Appointment -- MedicalService
+}
+
+
+' Relationships between layers
+UserService --> UserDAO
+DoctorService --> DoctorDAO
+MedicalServiceService --> MedicalServiceDAO
+AppointmentService --> AppointmentDAO
+AppointmentService --> DoctorService
+ReportController --> Report
+
+' Controller relationships with Views
+LoginController --> LoginView
+AdminDashboardController --> AdminDashboardView
+ReceptionistDashboardController --> ReceptionistDashboardView
+UserManagementController --> UserManagementView
+DoctorManagementController --> DoctorManagementView
+ServiceManagementController --> ServiceManagementView
+AppointmentManagementController --> AppointmentManagementView
+ReportController --> ReportView
+
+' Controller relationships with Services
+LoginController --> UserService
+UserManagementController --> UserService
+DoctorManagementController --> DoctorService
+ServiceManagementController --> MedicalServiceService
+AppointmentManagementController --> AppointmentService
+AppointmentManagementController --> DoctorService
+AppointmentManagementController --> MedicalServiceService
+ReportController --> AppointmentService
+
+' Dashboard controllers relationships with other controllers
+AdminDashboardController --> UserManagementController
+AdminDashboardController --> DoctorManagementController
+AdminDashboardController --> ServiceManagementController
+AdminDashboardController --> ReportController
+ReceptionistDashboardController --> AppointmentManagementController
+
+
+UserDAO --> Database
+DoctorDAO --> Database
+MedicalServiceDAO --> Database
+AppointmentDAO --> Database
+
+@enduml
