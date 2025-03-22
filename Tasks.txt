@@ -1,3 +1,0 @@
-De facut diagrame: 
-De clase
-Use case pentru fiecare utilizator - logheaza + ...
