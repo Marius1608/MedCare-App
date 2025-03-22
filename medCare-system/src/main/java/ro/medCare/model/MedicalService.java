@@ -23,7 +23,7 @@ public class MedicalService {
     private double price;
 
     @Column(nullable = false)
-    private int duration;  // în minute
+    private int duration;
 
     @Override
     public String toString() {

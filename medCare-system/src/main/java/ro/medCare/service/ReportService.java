@@ -37,9 +37,6 @@ public class ReportService {
         this.appointmentService = appointmentService;
     }
 
-    /**
-     * Generează un raport cu toate programările între două date și statistici despre medici și servicii
-     */
     public ReportDTO generateReport(LocalDateTime startDate, LocalDateTime endDate) {
         List<Appointment> appointments = appointmentService.getAppointmentsByDateRange(startDate, endDate);
         Map<Doctor, Long> doctorStatistics = appointmentService.getMostRequestedDoctors();
@@ -48,17 +45,13 @@ public class ReportService {
         return new ReportDTO(appointments, doctorStatistics, serviceStatistics, startDate, endDate);
     }
 
-    /**
-     * Exportă raportul în format CSV
-     */
     public File exportToCSV(ReportDTO report) throws IOException {
         File csvFile = File.createTempFile("report_", ".csv");
 
         try (FileWriter writer = new FileWriter(csvFile)) {
-            // Scrie header-ul
+
             writer.write("ID,Patient Name,Doctor,Specialization,Date & Time,Service,Price,Duration,Status\n");
 
-            // Scrie datele programărilor
             for (Appointment appointment : report.getAppointments()) {
                 writer.write(String.format("%d,%s,%s,%s,%s,%s,%.2f,%d,%s\n",
                         appointment.getId(),
@@ -73,7 +66,6 @@ public class ReportService {
                 ));
             }
 
-            // Adaugă secțiunea de statistici pentru medici
             writer.write("\nDoctor Statistics\n");
             writer.write("Doctor,Specialization,Appointments\n");
 
@@ -85,7 +77,6 @@ public class ReportService {
                 ));
             }
 
-            // Adaugă secțiunea de statistici pentru servicii
             writer.write("\nService Statistics\n");
             writer.write("Service,Price,Duration,Appointments\n");
 
@@ -102,9 +93,6 @@ public class ReportService {
         return csvFile;
     }
 
-    /**
-     * Exportă raportul în format XML
-     */
     public File exportToXML(ReportDTO report) throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -153,7 +141,6 @@ public class ReportService {
             appendTextElement(document, appointmentElement, "status", appointment.getStatus().name());
         }
 
-        // Adaugă statisticile pentru medici
         Element doctorStatsElement = document.createElement("doctorStatistics");
         reportElement.appendChild(doctorStatsElement);
 
@@ -166,7 +153,6 @@ public class ReportService {
             appendTextElement(document, doctorStatElement, "appointments", String.valueOf(entry.getValue()));
         }
 
-        // Adaugă statisticile pentru servicii
         Element serviceStatsElement = document.createElement("serviceStatistics");
         reportElement.appendChild(serviceStatsElement);
 
@@ -180,7 +166,6 @@ public class ReportService {
             appendTextElement(document, serviceStatElement, "appointments", String.valueOf(entry.getValue()));
         }
 
-        // Transformă documentul XML într-un fișier
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         DOMSource source = new DOMSource(document);
@@ -197,9 +182,6 @@ public class ReportService {
         return xmlFile;
     }
 
-    /**
-     * Utilitar pentru a adăuga un element text la un element părinte
-     */
     private void appendTextElement(Document document, Element parent, String name, String value) {
         Element element = document.createElement(name);
         element.setTextContent(value);

@@ -1,9 +1,6 @@
 package ro.medCare.view;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ro.medCare.controller.AdminDashboardController;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -24,31 +21,24 @@ public class AdminDashboardView {
     private JButton reportButton;
     private JButton logoutButton;
 
-    private final AdminDashboardController controller;
     private final Map<String, ActionListener> menuListeners = new HashMap<>();
 
-    @Autowired
-    public AdminDashboardView(AdminDashboardController controller) {
-        this.controller = controller;
+    public AdminDashboardView() {
         initialize();
     }
-
     private void initialize() {
-        // Setăm frame-ul principal
+
         frame = new JFrame("MedCare - Panou Administrator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
 
-        // Panoul principal cu BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Panoul meniu din stânga
         JPanel menuPanel = new JPanel(new GridLayout(5, 1, 10, 10));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         menuPanel.setBackground(new Color(240, 240, 240));
 
-        // Butoanele din meniu
         userButton = createMenuButton("Utilizatori", "users");
         doctorButton = createMenuButton("Medici", "doctors");
         serviceButton = createMenuButton("Servicii", "services");
@@ -56,37 +46,30 @@ public class AdminDashboardView {
         logoutButton = createMenuButton("Deconectare", "logout");
         logoutButton.setBackground(new Color(255, 200, 200));
 
-        // Adăugăm butoanele la panoul de meniu
         menuPanel.add(userButton);
         menuPanel.add(doctorButton);
         menuPanel.add(serviceButton);
         menuPanel.add(reportButton);
         menuPanel.add(logoutButton);
 
-        // Panoul cu taburi pentru conținut
         tabbedPane = new JTabbedPane();
         tabbedPane.setTabPlacement(JTabbedPane.TOP);
 
-        // Creăm panourile goale pentru fiecare secțiune
         userManagementPanel = new JPanel();
         doctorManagementPanel = new JPanel();
         serviceManagementPanel = new JPanel();
         reportsPanel = new JPanel();
 
-        // Adăugăm panourile la tabbed pane
         tabbedPane.addTab("Utilizatori", userManagementPanel);
         tabbedPane.addTab("Medici", doctorManagementPanel);
         tabbedPane.addTab("Servicii", serviceManagementPanel);
         tabbedPane.addTab("Rapoarte", reportsPanel);
 
-        // Adăugăm componentele la panoul principal
         mainPanel.add(menuPanel, BorderLayout.WEST);
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
 
-        // Adăugăm panoul principal la frame
         frame.getContentPane().add(mainPanel);
 
-        // Acțiune implicită - afișăm panoul de utilizatori la început
         userButton.doClick();
     }
 

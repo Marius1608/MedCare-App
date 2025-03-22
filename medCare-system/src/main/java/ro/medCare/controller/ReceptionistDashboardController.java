@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import ro.medCare.view.LoginView;
 import ro.medCare.view.ReceptionistDashboardView;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,16 +35,13 @@ public class ReceptionistDashboardController {
     private void setupMenuListeners() {
         Map<String, ActionListener> listeners = new HashMap<>();
 
-        // Listener pentru secțiunea Programări
         listeners.put("appointments", e -> {
             receptionistDashboardView.displayAppointmentManagementPanel();
             appointmentController.initialize();
         });
 
-        // Listener pentru Logout
         listeners.put("logout", e -> handleLogout());
 
-        // Adăugăm listenerii la view
         receptionistDashboardView.addMenuButtonListeners(listeners);
     }
 

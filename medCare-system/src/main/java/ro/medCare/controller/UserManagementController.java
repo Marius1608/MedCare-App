@@ -13,6 +13,7 @@ import java.util.List;
 
 @Controller
 public class UserManagementController {
+    
     private final UserManagementView userManagementView;
     private final UserService userService;
 
@@ -23,12 +24,11 @@ public class UserManagementController {
     }
 
     public void initialize() {
-        // Configurăm listenerii pentru butoane
+
         userManagementView.addCreateUserButtonListener(e -> handleCreateUser());
         userManagementView.addUpdateUserButtonListener(e -> handleUpdateUser());
         userManagementView.addDeleteUserButtonListener(e -> handleDeleteUser());
 
-        // Încărcăm lista de utilizatori
         refreshUserList();
     }
 
@@ -36,15 +36,12 @@ public class UserManagementController {
         try {
             User user = userManagementView.getUserFormData();
 
-            // Validăm datele
             if (!validateUserData(user)) {
                 return;
             }
 
-            // Creăm utilizatorul
             userService.createUser(user);
 
-            // Actualizăm lista și curățăm formularul
             refreshUserList();
             userManagementView.displayUserForm();
             userManagementView.displayErrorMessage("Utilizatorul a fost creat cu succes!");
@@ -65,18 +62,12 @@ public class UserManagementController {
 
             User user = userManagementView.getUserFormData();
 
-            // Validăm datele
             if (!validateUserData(user)) {
                 return;
             }
 
-            // Dacă parola este goală, păstrăm parola existentă
-            if (user.getPassword() == null || user.getPassword().isEmpty()) {
-                // În acest caz, service-ul trebuie să știe să nu actualizeze parola
-                // sau să obțină parola existentă din baza de date
-            }
+            if (user.getPassword() == null || user.getPassword().isEmpty()) {}
 
-            // Actualizăm utilizatorul
             userService.updateUser(user);
 
             // Actualizăm lista și curățăm formularul
@@ -100,7 +91,6 @@ public class UserManagementController {
                 return;
             }
 
-            // Confirmarea ștergerii
             int option = JOptionPane.showConfirmDialog(
                     null,
                     "Sigur doriți să ștergeți utilizatorul " + selectedUser.getName() + "?",
@@ -110,7 +100,6 @@ public class UserManagementController {
             if (option == JOptionPane.YES_OPTION) {
                 userService.deleteUser(selectedUser.getId());
 
-                // Actualizăm lista și curățăm formularul
                 refreshUserList();
                 userManagementView.displayUserForm();
                 userManagementView.displayErrorMessage("Utilizatorul a fost șters cu succes!");
@@ -132,23 +121,21 @@ public class UserManagementController {
     }
 
     private boolean validateUserData(User user) {
+
         StringBuilder errorMessage = new StringBuilder();
 
-        // Validăm numele
         if (user.getName() == null || user.getName().trim().isEmpty()) {
             errorMessage.append("Numele este obligatoriu!\n");
         } else if (user.getName().length() < 3 || user.getName().length() > 100) {
             errorMessage.append("Numele trebuie să aibă între 3 și 100 de caractere!\n");
         }
 
-        // Validăm username-ul
         if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
             errorMessage.append("Username-ul este obligatoriu!\n");
         } else if (user.getUsername().length() < 3 || user.getUsername().length() > 50) {
             errorMessage.append("Username-ul trebuie să aibă între 3 și 50 de caractere!\n");
         }
 
-        // Validăm parola doar pentru utilizatori noi sau dacă a fost modificată
         if (user.getId() == null || (user.getPassword() != null && !user.getPassword().isEmpty())) {
             if (user.getPassword() == null || user.getPassword().isEmpty()) {
                 errorMessage.append("Parola este obligatorie!\n");
@@ -157,7 +144,6 @@ public class UserManagementController {
             }
         }
 
-        // Dacă avem erori, le afișăm
         if (errorMessage.length() > 0) {
             userManagementView.displayErrorMessage(errorMessage.toString());
             return false;

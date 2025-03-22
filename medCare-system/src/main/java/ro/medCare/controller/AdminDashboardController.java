@@ -65,7 +65,6 @@ public class AdminDashboardController {
         });
 
         listeners.put("logout", e -> handleLogout());
-
         adminDashboardView.addMenuButtonListeners(listeners);
     }
 

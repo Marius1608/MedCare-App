@@ -56,40 +56,29 @@ public class DoctorService {
         return doctorRepository.findBySpecialization(specialization);
     }
 
-    /**
-     * Verifică disponibilitatea medicului pentru o anumită perioadă
-     * @param doctorId ID-ul medicului
-     * @param dateTime Data și ora programării
-     * @param durationMinutes Durata programării în minute
-     * @return true dacă medicul este disponibil, false în caz contrar
-     */
-    public boolean checkAvailability(Long doctorId, LocalDateTime dateTime, int durationMinutes) {
-        // 1. Verifică dacă este în programul de lucru al medicului
-        Doctor doctor = getDoctorById(doctorId);
 
-        // Presupunem că workHours este în format "HH:MM-HH:MM" (ex: "09:00-17:00")
+    public boolean checkAvailability(Long doctorId, LocalDateTime dateTime, int durationMinutes) {
+
+        Doctor doctor = getDoctorById(doctorId);
         String[] workHoursParts = doctor.getWorkHours().split("-");
 
         if (workHoursParts.length != 2) {
-            return false; // Format invalid pentru program de lucru
+            return false;
         }
 
         LocalTime startWorkHour = LocalTime.parse(workHoursParts[0].trim());
         LocalTime endWorkHour = LocalTime.parse(workHoursParts[1].trim());
         LocalTime appointmentTime = dateTime.toLocalTime();
 
-        // Verifică dacă ora programării este în programul de lucru
         if (appointmentTime.isBefore(startWorkHour) ||
                 appointmentTime.plusMinutes(durationMinutes).isAfter(endWorkHour)) {
             return false;
         }
 
-        // 2. Verifică dacă există alte programări care se suprapun
         LocalDateTime endDateTime = dateTime.plusMinutes(durationMinutes);
         List<Appointment> overlappingAppointments = appointmentRepository
                 .findByDoctorIdAndDateTimeBetween(doctorId, dateTime, endDateTime);
 
-        // Dacă există alte programări în acest interval, medicul nu este disponibil
         return overlappingAppointments.isEmpty();
     }
 }

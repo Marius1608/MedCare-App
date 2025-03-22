@@ -24,7 +24,7 @@ public class AppointmentService {
     }
 
     public Appointment createAppointment(Appointment appointment) {
-        // Verifică disponibilitatea medicului
+
         if (!doctorService.checkAvailability(
                 appointment.getDoctor().getId(),
                 appointment.getDateTime(),
@@ -32,7 +32,6 @@ public class AppointmentService {
             throw new ValidationException("Medicul nu este disponibil în intervalul specificat!");
         }
 
-        // Setează statusul inițial la NEW
         appointment.setStatus(AppointmentStatus.NEW);
 
         return appointmentRepository.save(appointment);
@@ -45,7 +44,6 @@ public class AppointmentService {
 
         Appointment existingAppointment = appointmentRepository.findById(appointment.getId()).orElse(null);
 
-        // Dacă se modifică data/ora sau medicul sau serviciul, verifică disponibilitatea
         if (existingAppointment != null &&
                 ((!existingAppointment.getDateTime().equals(appointment.getDateTime())) ||
                         (!existingAppointment.getDoctor().getId().equals(appointment.getDoctor().getId())) ||
@@ -93,11 +91,9 @@ public class AppointmentService {
     public Map<Doctor, Long> getMostRequestedDoctors() {
         List<Appointment> appointments = appointmentRepository.findAll();
 
-        // Groupează programările după medic și numără
         Map<Doctor, Long> doctorCounts = appointments.stream()
                 .collect(Collectors.groupingBy(Appointment::getDoctor, Collectors.counting()));
 
-        // Sortează după numărul de programări (descrescător)
         return doctorCounts.entrySet().stream()
                 .sorted(Map.Entry.<Doctor, Long>comparingByValue().reversed())
                 .collect(Collectors.toMap(
@@ -111,11 +107,9 @@ public class AppointmentService {
     public Map<MedicalService, Long> getMostRequestedServices() {
         List<Appointment> appointments = appointmentRepository.findAll();
 
-        // Groupează programările după serviciu și numără
         Map<MedicalService, Long> serviceCounts = appointments.stream()
                 .collect(Collectors.groupingBy(Appointment::getService, Collectors.counting()));
 
-        // Sortează după numărul de programări (descrescător)
         return serviceCounts.entrySet().stream()
                 .sorted(Map.Entry.<MedicalService, Long>comparingByValue().reversed())
                 .collect(Collectors.toMap(

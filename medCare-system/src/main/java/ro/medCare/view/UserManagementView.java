@@ -38,16 +38,15 @@ public class UserManagementView {
     }
 
     private void initialize() {
-        // Inițializăm panoul principal
+
         mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Configurăm tabelul
         String[] columnNames = {"ID", "Nume", "Username", "Rol"};
         userTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Celulele nu sunt editabile
+                return false;
             }
         };
 
@@ -55,7 +54,6 @@ public class UserManagementView {
         userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         userTable.getTableHeader().setReorderingAllowed(false);
 
-        // Ascultător pentru click pe rând din tabel
         userTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -83,7 +81,6 @@ public class UserManagementView {
         scrollPane = new JScrollPane(userTable);
         scrollPane.setPreferredSize(new Dimension(500, 300));
 
-        // Configurăm panoul de formular
         formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createTitledBorder("Detalii utilizator"));
 
@@ -91,7 +88,6 @@ public class UserManagementView {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Adăugăm etichetele și câmpurile
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(new JLabel("Nume:"), gbc);
@@ -124,7 +120,6 @@ public class UserManagementView {
         roleComboBox = new JComboBox<>(UserRole.values());
         formPanel.add(roleComboBox, gbc);
 
-        // Adăugăm butoanele
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         addButton = new JButton("Adaugă");
@@ -132,7 +127,6 @@ public class UserManagementView {
         deleteButton = new JButton("Șterge");
         clearButton = new JButton("Curăță");
 
-        // Dezactivăm butoanele până când nu este selectat un utilizator
         updateButton.setEnabled(false);
         deleteButton.setEnabled(false);
 
@@ -141,14 +135,11 @@ public class UserManagementView {
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
 
-        // Label pentru mesaje de eroare
         errorLabel = new JLabel("");
         errorLabel.setForeground(Color.RED);
 
-        // Adăugăm acțiune pentru butonul "Curăță"
         clearButton.addActionListener(e -> clearForm());
 
-        // Organizăm toate componentele în panoul principal
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(formPanel, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -182,7 +173,6 @@ public class UserManagementView {
     }
 
     public void displayUserList() {
-        // Lista va fi populată de controller
     }
 
     public User getUserFormData() {

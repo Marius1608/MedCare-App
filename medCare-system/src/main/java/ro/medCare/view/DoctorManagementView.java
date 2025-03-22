@@ -36,16 +36,15 @@ public class DoctorManagementView {
     }
 
     private void initialize() {
-        // Inițializăm panoul principal
+
         mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Configurăm tabelul
         String[] columnNames = {"ID", "Nume", "Specializare", "Program de lucru"};
         doctorTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Celulele nu sunt editabile
+                return false;
             }
         };
 
@@ -53,7 +52,6 @@ public class DoctorManagementView {
         doctorTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         doctorTable.getTableHeader().setReorderingAllowed(false);
 
-        // Ascultător pentru click pe rând din tabel
         doctorTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -80,7 +78,6 @@ public class DoctorManagementView {
         scrollPane = new JScrollPane(doctorTable);
         scrollPane.setPreferredSize(new Dimension(500, 300));
 
-        // Configurăm panoul de formular
         formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createTitledBorder("Detalii medic"));
 
@@ -88,7 +85,6 @@ public class DoctorManagementView {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Adăugăm etichetele și câmpurile
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(new JLabel("Nume:"), gbc);
@@ -113,7 +109,6 @@ public class DoctorManagementView {
         workHoursField = new JTextField(20);
         formPanel.add(workHoursField, gbc);
 
-        // Adăugăm butoanele
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         addButton = new JButton("Adaugă");
@@ -121,7 +116,6 @@ public class DoctorManagementView {
         deleteButton = new JButton("Șterge");
         clearButton = new JButton("Curăță");
 
-        // Dezactivăm butoanele până când nu este selectat un medic
         updateButton.setEnabled(false);
         deleteButton.setEnabled(false);
 
@@ -130,14 +124,11 @@ public class DoctorManagementView {
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
 
-        // Label pentru mesaje de eroare
         errorLabel = new JLabel("");
         errorLabel.setForeground(Color.RED);
 
-        // Adăugăm acțiune pentru butonul "Curăță"
         clearButton.addActionListener(e -> clearForm());
 
-        // Organizăm toate componentele în panoul principal
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(formPanel, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -166,10 +157,6 @@ public class DoctorManagementView {
 
     public void displayDoctorForm() {
         clearForm();
-    }
-
-    public void displayDoctorList() {
-        // Lista va fi populată de controller
     }
 
     public Doctor getDoctorFormData() {

@@ -36,7 +36,7 @@ public class ServiceManagementView {
     }
 
     private void initialize() {
-        // Inițializăm panoul principal
+
         mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -45,7 +45,7 @@ public class ServiceManagementView {
         serviceTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Celulele nu sunt editabile
+                return false;
             }
         };
 
@@ -80,7 +80,6 @@ public class ServiceManagementView {
         scrollPane = new JScrollPane(serviceTable);
         scrollPane.setPreferredSize(new Dimension(500, 300));
 
-        // Configurăm panoul de formular
         formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createTitledBorder("Detalii serviciu medical"));
 
@@ -88,7 +87,6 @@ public class ServiceManagementView {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Adăugăm etichetele și câmpurile
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(new JLabel("Nume serviciu:"), gbc);
@@ -113,7 +111,6 @@ public class ServiceManagementView {
         durationField = new JTextField(20);
         formPanel.add(durationField, gbc);
 
-        // Adăugăm butoanele
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         addButton = new JButton("Adaugă");
@@ -121,7 +118,6 @@ public class ServiceManagementView {
         deleteButton = new JButton("Șterge");
         clearButton = new JButton("Curăță");
 
-        // Dezactivăm butoanele până când nu este selectat un serviciu
         updateButton.setEnabled(false);
         deleteButton.setEnabled(false);
 
@@ -130,14 +126,11 @@ public class ServiceManagementView {
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
 
-        // Label pentru mesaje de eroare
         errorLabel = new JLabel("");
         errorLabel.setForeground(Color.RED);
 
-        // Adăugăm acțiune pentru butonul "Curăță"
         clearButton.addActionListener(e -> clearForm());
 
-        // Organizăm toate componentele în panoul principal
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(formPanel, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -169,7 +162,7 @@ public class ServiceManagementView {
     }
 
     public void displayServiceList() {
-        // Lista va fi populată de controller
+
     }
 
     public MedicalService getServiceFormData() {

@@ -25,7 +25,7 @@ public class ReportController {
     }
 
     public void initialize() {
-        // Configurăm listenerii pentru butoane
+
         reportView.addGenerateReportButtonListener(e -> handleGenerateReport());
         reportView.addExportToCSVButtonListener(e -> handleExportToCSV());
         reportView.addExportToXMLButtonListener(e -> handleExportToXML());
@@ -36,12 +36,10 @@ public class ReportController {
             Date startDate = reportView.getStartDate();
             Date endDate = reportView.getEndDate();
 
-            // Validăm intervalul de timp
             if (!validateDateRange(startDate, endDate)) {
                 return;
             }
 
-            // Convertim Date în LocalDateTime
             LocalDateTime startDateTime = startDate.toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
@@ -55,7 +53,6 @@ public class ReportController {
                     .withSecond(0)
                     .withNano(0);
 
-            // Generăm raportul
             currentReport = reportService.generateReport(startDateTime, endDateTime);
 
             // Afișăm raportul
@@ -80,21 +77,17 @@ public class ReportController {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
 
-                // Adăugăm extensia .csv dacă nu există
                 if (!selectedFile.getName().toLowerCase().endsWith(".csv")) {
                     selectedFile = new File(selectedFile.getAbsolutePath() + ".csv");
                 }
 
-                // Exportăm raportul
                 File csvFile = reportService.exportToCSV(currentReport);
 
-                // Copiem fișierul temporar în locația selectată de utilizator
                 java.nio.file.Files.copy(
                         csvFile.toPath(),
                         selectedFile.toPath(),
                         java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
-                // Ștergem fișierul temporar
                 csvFile.delete();
 
                 reportView.displayErrorMessage("Raport exportat cu succes în format CSV!");
@@ -118,21 +111,17 @@ public class ReportController {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
 
-                // Adăugăm extensia .xml dacă nu există
                 if (!selectedFile.getName().toLowerCase().endsWith(".xml")) {
                     selectedFile = new File(selectedFile.getAbsolutePath() + ".xml");
                 }
 
-                // Exportăm raportul
                 File xmlFile = reportService.exportToXML(currentReport);
 
-                // Copiem fișierul temporar în locația selectată de utilizator
                 java.nio.file.Files.copy(
                         xmlFile.toPath(),
                         selectedFile.toPath(),
                         java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
-                // Ștergem fișierul temporar
                 xmlFile.delete();
 
                 reportView.displayErrorMessage("Raport exportat cu succes în format XML!");
@@ -153,7 +142,6 @@ public class ReportController {
             return false;
         }
 
-        // Verificăm dacă intervalul nu este prea mare (ex. max 1 an)
         long diffInMillies = Math.abs(endDate.getTime() - startDate.getTime());
         long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
 

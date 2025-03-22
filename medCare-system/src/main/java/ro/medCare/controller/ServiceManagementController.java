@@ -23,28 +23,25 @@ public class ServiceManagementController {
     }
 
     public void initialize() {
-        // Configurăm listenerii pentru butoane
+
         serviceManagementView.addCreateServiceButtonListener(e -> handleCreateService());
         serviceManagementView.addUpdateServiceButtonListener(e -> handleUpdateService());
         serviceManagementView.addDeleteServiceButtonListener(e -> handleDeleteService());
 
-        // Încărcăm lista de servicii
         refreshServiceList();
     }
 
     private void handleCreateService() {
         try {
+
             MedicalService service = serviceManagementView.getServiceFormData();
 
-            // Validăm datele
             if (!validateServiceData(service)) {
                 return;
             }
 
-            // Creăm serviciul
             medicalServiceService.createMedicalService(service);
 
-            // Actualizăm lista și curățăm formularul
             refreshServiceList();
             serviceManagementView.displayServiceForm();
             serviceManagementView.displayErrorMessage("Serviciul medical a fost creat cu succes!");
@@ -65,15 +62,12 @@ public class ServiceManagementController {
 
             MedicalService service = serviceManagementView.getServiceFormData();
 
-            // Validăm datele
             if (!validateServiceData(service)) {
                 return;
             }
 
-            // Actualizăm serviciul
             medicalServiceService.updateMedicalService(service);
 
-            // Actualizăm lista și curățăm formularul
             refreshServiceList();
             serviceManagementView.displayServiceForm();
             serviceManagementView.displayErrorMessage("Serviciul medical a fost actualizat cu succes!");
@@ -94,7 +88,6 @@ public class ServiceManagementController {
                 return;
             }
 
-            // Confirmarea ștergerii
             int option = JOptionPane.showConfirmDialog(
                     null,
                     "Sigur doriți să ștergeți serviciul medical " + selectedService.getName() + "?",
@@ -103,8 +96,6 @@ public class ServiceManagementController {
 
             if (option == JOptionPane.YES_OPTION) {
                 medicalServiceService.deleteMedicalService(selectedService.getId());
-
-                // Actualizăm lista și curățăm formularul
                 refreshServiceList();
                 serviceManagementView.displayServiceForm();
                 serviceManagementView.displayErrorMessage("Serviciul medical a fost șters cu succes!");
@@ -128,24 +119,20 @@ public class ServiceManagementController {
     private boolean validateServiceData(MedicalService service) {
         StringBuilder errorMessage = new StringBuilder();
 
-        // Validăm numele
         if (service.getName() == null || service.getName().trim().isEmpty()) {
             errorMessage.append("Numele serviciului este obligatoriu!\n");
         } else if (service.getName().length() < 3 || service.getName().length() > 100) {
             errorMessage.append("Numele serviciului trebuie să aibă între 3 și 100 de caractere!\n");
         }
 
-        // Validăm prețul
         if (service.getPrice() < 0) {
             errorMessage.append("Prețul nu poate fi negativ!\n");
         }
 
-        // Validăm durata
         if (service.getDuration() < 5) {
             errorMessage.append("Durata minimă este de 5 minute!\n");
         }
 
-        // Dacă avem erori, le afișăm
         if (errorMessage.length() > 0) {
             serviceManagementView.displayErrorMessage(errorMessage.toString());
             return false;

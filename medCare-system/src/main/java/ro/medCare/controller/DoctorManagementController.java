@@ -17,7 +17,6 @@ public class DoctorManagementController {
     private final DoctorManagementView doctorManagementView;
     private final DoctorService doctorService;
 
-    // Regex pentru validarea formatului programului de lucru (HH:MM-HH:MM)
     private static final Pattern WORK_HOURS_PATTERN = Pattern.compile(
             "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$");
 
@@ -28,12 +27,11 @@ public class DoctorManagementController {
     }
 
     public void initialize() {
-        // Configurăm listenerii pentru butoane
+
         doctorManagementView.addCreateDoctorButtonListener(e -> handleCreateDoctor());
         doctorManagementView.addUpdateDoctorButtonListener(e -> handleUpdateDoctor());
         doctorManagementView.addDeleteDoctorButtonListener(e -> handleDeleteDoctor());
 
-        // Încărcăm lista de medici
         refreshDoctorList();
     }
 
@@ -41,15 +39,12 @@ public class DoctorManagementController {
         try {
             Doctor doctor = doctorManagementView.getDoctorFormData();
 
-            // Validăm datele
             if (!validateDoctorData(doctor)) {
                 return;
             }
 
-            // Creăm medicul
             doctorService.createDoctor(doctor);
 
-            // Actualizăm lista și curățăm formularul
             refreshDoctorList();
             doctorManagementView.displayDoctorForm();
             doctorManagementView.displayErrorMessage("Medicul a fost creat cu succes!");
@@ -70,15 +65,12 @@ public class DoctorManagementController {
 
             Doctor doctor = doctorManagementView.getDoctorFormData();
 
-            // Validăm datele
             if (!validateDoctorData(doctor)) {
                 return;
             }
 
-            // Actualizăm medicul
             doctorService.updateDoctor(doctor);
 
-            // Actualizăm lista și curățăm formularul
             refreshDoctorList();
             doctorManagementView.displayDoctorForm();
             doctorManagementView.displayErrorMessage("Medicul a fost actualizat cu succes!");
@@ -133,28 +125,24 @@ public class DoctorManagementController {
     private boolean validateDoctorData(Doctor doctor) {
         StringBuilder errorMessage = new StringBuilder();
 
-        // Validăm numele
         if (doctor.getName() == null || doctor.getName().trim().isEmpty()) {
             errorMessage.append("Numele este obligatoriu!\n");
         } else if (doctor.getName().length() < 3 || doctor.getName().length() > 100) {
             errorMessage.append("Numele trebuie să aibă între 3 și 100 de caractere!\n");
         }
 
-        // Validăm specializarea
         if (doctor.getSpecialization() == null || doctor.getSpecialization().trim().isEmpty()) {
             errorMessage.append("Specializarea este obligatorie!\n");
         } else if (doctor.getSpecialization().length() < 3 || doctor.getSpecialization().length() > 100) {
             errorMessage.append("Specializarea trebuie să aibă între 3 și 100 de caractere!\n");
         }
 
-        // Validăm programul de lucru
         if (doctor.getWorkHours() == null || doctor.getWorkHours().trim().isEmpty()) {
             errorMessage.append("Programul de lucru este obligatoriu!\n");
         } else if (!WORK_HOURS_PATTERN.matcher(doctor.getWorkHours()).matches()) {
             errorMessage.append("Programul de lucru trebuie să fie în format HH:MM-HH:MM (ex: 09:00-17:00)!\n");
         }
 
-        // Dacă avem erori, le afișăm
         if (errorMessage.length() > 0) {
             doctorManagementView.displayErrorMessage(errorMessage.toString());
             return false;

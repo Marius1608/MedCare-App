@@ -46,11 +46,10 @@ public class ReportView {
     }
 
     private void initialize() {
-        // Inițializăm panoul principal
+
         mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Configurăm panoul de control
         controlPanel = new JPanel(new GridBagLayout());
         controlPanel.setBorder(BorderFactory.createTitledBorder("Generare raport"));
 
@@ -58,7 +57,6 @@ public class ReportView {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Adăugăm etichetele și câmpurile
         gbc.gridx = 0;
         gbc.gridy = 0;
         controlPanel.add(new JLabel("Data de început:"), gbc);
@@ -66,7 +64,7 @@ public class ReportView {
         gbc.gridx = 1;
         startDateChooser = new JDateChooser();
         startDateChooser.setDateFormatString("dd.MM.yyyy");
-        // Setăm data de început la 1 luna în urmă
+
         Date today = new Date();
         Date oneMonthAgo = new Date(today.getTime() - 30L * 24 * 60 * 60 * 1000);
         startDateChooser.setDate(oneMonthAgo);
@@ -82,14 +80,11 @@ public class ReportView {
         endDateChooser.setDate(today);
         controlPanel.add(endDateChooser, gbc);
 
-        // Adăugăm butoanele
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         generateButton = new JButton("Generează raport");
         exportCSVButton = new JButton("Exportă CSV");
         exportXMLButton = new JButton("Exportă XML");
-
-        // Dezactivăm butoanele de export până când nu este generat un raport
         exportCSVButton.setEnabled(false);
         exportXMLButton.setEnabled(false);
 
@@ -97,7 +92,6 @@ public class ReportView {
         buttonPanel.add(exportCSVButton);
         buttonPanel.add(exportXMLButton);
 
-        // Configurăm tabelul pentru raport
         String[] columnNames = {"ID", "Pacient", "Medic", "Specializare", "Data și ora", "Serviciu", "Preț", "Status"};
         reportTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -113,7 +107,6 @@ public class ReportView {
         scrollPane = new JScrollPane(reportTable);
         scrollPane.setPreferredSize(new Dimension(600, 200));
 
-        // Configurăm panoul pentru grafice
         chartPanel = new JPanel(new GridLayout(1, 2, 10, 10));
         chartPanel.setBorder(BorderFactory.createTitledBorder("Statistici"));
 
@@ -126,15 +119,12 @@ public class ReportView {
         chartPanel.add(doctorChartPanel);
         chartPanel.add(serviceChartPanel);
 
-        // Label pentru mesaje de eroare
         errorLabel = new JLabel("");
         errorLabel.setForeground(Color.RED);
 
-        // File chooser pentru export
         fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Salvare raport");
 
-        // Organizăm toate componentele în panoul principal
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(controlPanel, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -146,11 +136,9 @@ public class ReportView {
     }
 
     public void displayDateRangeSelector() {
-        // Este deja afișat în panoul de control
     }
 
     public void displayReportTable() {
-        // Este deja afișat în panoul principal
     }
 
     public void displayExportOptions() {
@@ -184,12 +172,10 @@ public class ReportView {
             return;
         }
 
-        // Actualizăm tabelul cu programările
         reportTableModel.setRowCount(0);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
         for (Appointment appointment : report.getAppointments()) {
-            // Convertim LocalDateTime în Date pentru afișare formatată
             Date date = Date.from(appointment.getDateTime().atZone(ZoneId.systemDefault()).toInstant());
             String formattedDate = dateFormat.format(date);
 
@@ -205,32 +191,26 @@ public class ReportView {
             });
         }
 
-        // Creăm graficul pentru medici
         JFreeChart doctorChart = createBarChart(report.getDoctorStatistics(), "Top medici solicitați");
         doctorChartPanel.removeAll();
         doctorChartPanel.add(new ChartPanel(doctorChart), BorderLayout.CENTER);
 
-        // Creăm graficul pentru servicii
         JFreeChart serviceChart = createBarChart(report.getServiceStatistics(), "Top servicii solicitate");
         serviceChartPanel.removeAll();
         serviceChartPanel.add(new ChartPanel(serviceChart), BorderLayout.CENTER);
 
-        // Actualizăm UI
         doctorChartPanel.revalidate();
         doctorChartPanel.repaint();
         serviceChartPanel.revalidate();
         serviceChartPanel.repaint();
 
-        // Activăm butoanele de export
         displayExportOptions();
     }
 
     public JFreeChart createBarChart(Map<?, Long> data, String title) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        // Populăm dataset-ul cu datele primite
         if (data != null) {
-            // Limităm la top 5 pentru claritate
             int count = 0;
             for (Map.Entry<?, Long> entry : data.entrySet()) {
                 if (count >= 5) break;
@@ -249,7 +229,6 @@ public class ReportView {
             }
         }
 
-        // Creăm chart-ul
         JFreeChart chart = ChartFactory.createBarChart(
                 title,
                 "",

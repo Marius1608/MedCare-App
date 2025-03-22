@@ -24,7 +24,6 @@ public class UserService {
     }
 
     public User authenticate(String username, String password) {
-
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ValidationException("Utilizatorul nu există!"));
 
@@ -44,6 +43,7 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+
         Optional<User> existingUser = userRepository.findById(user.getId());
         if (existingUser.isEmpty()) {
             throw new ResourceNotFoundException("Utilizatorul nu a fost găsit!");
@@ -54,7 +54,6 @@ public class UserService {
             throw new ValidationException("Numele de utilizator există deja pentru alt utilizator!");
         }
 
-        // Dacă parola a fost modificată, criptează noua parolă
         if (!user.getPassword().equals(existingUser.get().getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }

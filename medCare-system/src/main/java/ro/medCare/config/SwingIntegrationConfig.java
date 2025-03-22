@@ -6,7 +6,6 @@ import ro.medCare.view.*;
 
 import jakarta.annotation.PostConstruct;
 
-
 @Configuration
 public class SwingIntegrationConfig {
 
@@ -38,7 +37,10 @@ public class SwingIntegrationConfig {
 
     @PostConstruct
     public void initialize() {
+        setupPanels();
+    }
 
+    private void setupPanels() {
         adminDashboardView.getUserManagementPanel().setLayout(new java.awt.BorderLayout());
         adminDashboardView.getUserManagementPanel().add(userManagementView.getMainPanel());
 

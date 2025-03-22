@@ -11,6 +11,7 @@ import ro.medCare.view.LoginView;
 import ro.medCare.view.ReceptionistDashboardView;
 
 import javax.swing.*;
+import jakarta.annotation.PostConstruct;
 
 @Controller
 public class LoginController {
@@ -23,6 +24,11 @@ public class LoginController {
         this.loginView = loginView;
         this.userService = userService;
         this.context = context;
+    }
+
+    @PostConstruct
+    public void initialize() {
+        loginView.addLoginButtonListener(e -> handleLogin());
     }
 
     public void handleLogin() {

@@ -1,8 +1,6 @@
 package ro.medCare.view;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ro.medCare.controller.ReceptionistDashboardController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,48 +16,37 @@ public class ReceptionistDashboardView {
     private JButton logoutButton;
     private JPanel appointmentPanel;
 
-    private final ReceptionistDashboardController controller;
     private final Map<String, ActionListener> menuListeners = new HashMap<>();
 
-    @Autowired
-    public ReceptionistDashboardView(ReceptionistDashboardController controller) {
-        this.controller = controller;
+    public ReceptionistDashboardView() {
         initialize();
     }
 
     private void initialize() {
-        // Setăm frame-ul principal
         frame = new JFrame("MedCare - Panou Recepționist");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
 
-        // Panoul principal cu BorderLayout
         mainPanel = new JPanel(new BorderLayout());
 
-        // Panoul meniu din stânga
         JPanel menuPanel = new JPanel(new GridLayout(2, 1, 10, 10));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         menuPanel.setBackground(new Color(240, 240, 240));
 
-        // Butoanele din meniu
         appointmentButton = createMenuButton("Programări", "appointments");
         logoutButton = createMenuButton("Deconectare", "logout");
         logoutButton.setBackground(new Color(255, 200, 200));
 
-        // Adăugăm butoanele la panoul de meniu
         menuPanel.add(appointmentButton);
         menuPanel.add(logoutButton);
 
-        // Panoul pentru conținut
         appointmentPanel = new JPanel(new BorderLayout());
         appointmentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Adăugăm componentele la panoul principal
         mainPanel.add(menuPanel, BorderLayout.WEST);
         mainPanel.add(appointmentPanel, BorderLayout.CENTER);
 
-        // Adăugăm panoul principal la frame
         frame.getContentPane().add(mainPanel);
     }
 
@@ -74,8 +61,6 @@ public class ReceptionistDashboardView {
 
     public void display() {
         frame.setVisible(true);
-        // Afișăm automat panoul de programări
-        appointmentButton.doClick();
     }
 
     public void close() {
@@ -83,7 +68,7 @@ public class ReceptionistDashboardView {
     }
 
     public void displayAppointmentManagementPanel() {
-        // Acest panel va fi gestionat de controllerul de programări
+        // Aici pot fi adăugate alte acțiuni specifice pentru afișarea panoului de programări
     }
 
     public void addMenuButtonListeners(Map<String, ActionListener> listeners) {

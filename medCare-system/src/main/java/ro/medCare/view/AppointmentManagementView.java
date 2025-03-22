@@ -49,11 +49,10 @@ public class AppointmentManagementView {
     }
 
     private void initialize() {
-        // Inițializăm panoul principal
+
         mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Configurăm tabelul
         String[] columnNames = {"ID", "Pacient", "Medic", "Data și ora", "Serviciu", "Durată", "Status"};
         appointmentTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -66,14 +65,11 @@ public class AppointmentManagementView {
         appointmentTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         appointmentTable.getTableHeader().setReorderingAllowed(false);
 
-        // Ascultător pentru click pe rând din tabel
         appointmentTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int selectedRow = appointmentTable.getSelectedRow();
                 if (selectedRow >= 0) {
-                    // Selecția programării va fi gestionată de controller
-                    // pentru a obține obiectul complet
                     Long id = Long.parseLong(appointmentTable.getValueAt(selectedRow, 0).toString());
                     updateStatusButton.setEnabled(true);
                     deleteButton.setEnabled(true);
@@ -84,7 +80,6 @@ public class AppointmentManagementView {
         scrollPane = new JScrollPane(appointmentTable);
         scrollPane.setPreferredSize(new Dimension(600, 300));
 
-        // Configurăm panoul de formular
         formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createTitledBorder("Detalii programare"));
 
@@ -92,7 +87,6 @@ public class AppointmentManagementView {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Adăugăm etichetele și câmpurile
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(new JLabel("Nume pacient:"), gbc);
@@ -124,13 +118,11 @@ public class AppointmentManagementView {
         formPanel.add(new JLabel("Ora:"), gbc);
 
         gbc.gridx = 1;
-        // Configurăm spinner-ul pentru ora
         SpinnerDateModel timeModel = new SpinnerDateModel();
         timeModel.setCalendarField(Calendar.MINUTE);
         timeSpinner = new JSpinner(timeModel);
         JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner, "HH:mm");
         timeSpinner.setEditor(timeEditor);
-        // Setăm ora curentă
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 9);
         calendar.set(Calendar.MINUTE, 0);
@@ -155,7 +147,6 @@ public class AppointmentManagementView {
         statusComboBox.setSelectedItem(AppointmentStatus.NEW);
         formPanel.add(statusComboBox, gbc);
 
-        // Adăugăm butoanele
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         createButton = new JButton("Crează programare");
@@ -163,7 +154,6 @@ public class AppointmentManagementView {
         deleteButton = new JButton("Șterge programare");
         clearButton = new JButton("Curăță formular");
 
-        // Dezactivăm butoanele până când nu este selectată o programare
         updateStatusButton.setEnabled(false);
         deleteButton.setEnabled(false);
 
@@ -172,14 +162,11 @@ public class AppointmentManagementView {
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
 
-        // Label pentru mesaje de eroare
         errorLabel = new JLabel("");
         errorLabel.setForeground(Color.RED);
 
-        // Adăugăm acțiune pentru butonul "Curăță"
         clearButton.addActionListener(e -> clearForm());
 
-        // Organizăm toate componentele în panoul principal
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(formPanel, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -211,10 +198,6 @@ public class AppointmentManagementView {
 
     public void displayAppointmentForm() {
         clearForm();
-    }
-
-    public void displayAppointmentList() {
-        // Lista va fi populată de controller
     }
 
     public Appointment getAppointmentFormData() {
@@ -315,10 +298,9 @@ public class AppointmentManagementView {
         this.selectedAppointment = appointment;
 
         if (appointment != null) {
-            // Populăm formularul cu datele programării
+
             patientNameField.setText(appointment.getPatientName());
 
-            // Selectăm medicul
             for (int i = 0; i < doctorComboBox.getItemCount(); i++) {
                 Doctor doctor = doctorComboBox.getItemAt(i);
                 if (doctor.getId().equals(appointment.getDoctor().getId())) {
@@ -327,12 +309,10 @@ public class AppointmentManagementView {
                 }
             }
 
-            // Setăm data și ora
             Date dateTime = Date.from(appointment.getDateTime().atZone(ZoneId.systemDefault()).toInstant());
             dateChooser.setDate(dateTime);
             timeSpinner.setValue(dateTime);
 
-            // Selectăm serviciul
             for (int i = 0; i < serviceComboBox.getItemCount(); i++) {
                 MedicalService service = serviceComboBox.getItemAt(i);
                 if (service.getId().equals(appointment.getService().getId())) {
@@ -341,10 +321,8 @@ public class AppointmentManagementView {
                 }
             }
 
-            // Setăm statusul
             statusComboBox.setSelectedItem(appointment.getStatus());
 
-            // Activăm butoanele
             updateStatusButton.setEnabled(true);
             deleteButton.setEnabled(true);
         }

@@ -158,31 +158,26 @@ public class AppointmentManagementController {
     private boolean validateAppointmentData(Appointment appointment) {
         StringBuilder errorMessage = new StringBuilder();
 
-        // Validăm numele pacientului
         if (appointment.getPatientName() == null || appointment.getPatientName().trim().isEmpty()) {
             errorMessage.append("Numele pacientului este obligatoriu!\n");
         } else if (appointment.getPatientName().length() < 3 || appointment.getPatientName().length() > 100) {
             errorMessage.append("Numele pacientului trebuie să aibă între 3 și 100 de caractere!\n");
         }
 
-        // Validăm medicul
         if (appointment.getDoctor() == null) {
             errorMessage.append("Selectați un medic pentru programare!\n");
         }
 
-        // Validăm data și ora
         if (appointment.getDateTime() == null) {
             errorMessage.append("Data și ora sunt obligatorii!\n");
         } else if (appointment.getDateTime().isBefore(LocalDateTime.now())) {
             errorMessage.append("Data și ora trebuie să fie în viitor!\n");
         }
 
-        // Validăm serviciul
         if (appointment.getService() == null) {
             errorMessage.append("Selectați un serviciu medical!\n");
         }
 
-        // Dacă avem erori, le afișăm
         if (errorMessage.length() > 0) {
             appointmentManagementView.displayErrorMessage(errorMessage.toString());
             return false;
