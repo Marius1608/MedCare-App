@@ -13,6 +13,7 @@ import java.util.List;
 
 @Controller
 public class ServiceManagementController {
+
     private final ServiceManagementView serviceManagementView;
     private final MedicalServiceService medicalServiceService;
 

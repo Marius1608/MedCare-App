@@ -15,6 +15,7 @@ import jakarta.annotation.PostConstruct;
 
 @Controller
 public class LoginController {
+
     private final LoginView loginView;
     private final UserService userService;
     private final ApplicationContext context;

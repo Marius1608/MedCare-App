@@ -6,6 +6,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import ro.medCare.util.UIStyler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ro.medCare.dto.ReportDTO;
@@ -40,109 +41,165 @@ public class ReportView {
     private JPanel mainPanel;
     private JLabel errorLabel;
 
-    @Autowired
+
     public ReportView() {
         initialize();
     }
 
     private void initialize() {
-
+        // Initialize the main panel with BorderLayout
         mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        mainPanel.setBackground(UIStyler.BACKGROUND_COLOR);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
+        // Add a title panel at the top
+        JPanel titlePanel = UIStyler.createTitlePanel("Report Generation");
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
+
+        // Create the control panel with improved styling
         controlPanel = new JPanel(new GridBagLayout());
-        controlPanel.setBorder(BorderFactory.createTitledBorder("Generare raport"));
+        controlPanel.setBackground(Color.WHITE);
+        controlPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Report Settings"),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
+        // Start date field
+        JLabel startDateLabel = new JLabel("Start Date:");
+        UIStyler.styleLabel(startDateLabel);
         gbc.gridx = 0;
         gbc.gridy = 0;
-        controlPanel.add(new JLabel("Data de început:"), gbc);
+        controlPanel.add(startDateLabel, gbc);
 
-        gbc.gridx = 1;
         startDateChooser = new JDateChooser();
         startDateChooser.setDateFormatString("dd.MM.yyyy");
+        startDateChooser.setFont(UIStyler.REGULAR_FONT);
 
         Date today = new Date();
         Date oneMonthAgo = new Date(today.getTime() - 30L * 24 * 60 * 60 * 1000);
         startDateChooser.setDate(oneMonthAgo);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
         controlPanel.add(startDateChooser, gbc);
 
+        // End date field
+        JLabel endDateLabel = new JLabel("End Date:");
+        UIStyler.styleLabel(endDateLabel);
         gbc.gridx = 0;
         gbc.gridy = 1;
-        controlPanel.add(new JLabel("Data de sfârșit:"), gbc);
+        gbc.gridwidth = 1;
+        controlPanel.add(endDateLabel, gbc);
 
-        gbc.gridx = 1;
         endDateChooser = new JDateChooser();
         endDateChooser.setDateFormatString("dd.MM.yyyy");
+        endDateChooser.setFont(UIStyler.REGULAR_FONT);
         endDateChooser.setDate(today);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
         controlPanel.add(endDateChooser, gbc);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // Create button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        buttonPanel.setBackground(UIStyler.BACKGROUND_COLOR);
 
-        generateButton = new JButton("Generează raport");
-        exportCSVButton = new JButton("Exportă CSV");
-        exportXMLButton = new JButton("Exportă XML");
+        // Create styled buttons
+        generateButton = new JButton("Generate Report");
+        UIStyler.styleSuccessButton(generateButton);
+        UIStyler.applyHoverEffect(generateButton);
+
+        exportCSVButton = new JButton("Export to CSV");
+        UIStyler.styleButton(exportCSVButton);
+        UIStyler.applyHoverEffect(exportCSVButton);
         exportCSVButton.setEnabled(false);
+
+        exportXMLButton = new JButton("Export to XML");
+        UIStyler.styleButton(exportXMLButton);
+        UIStyler.applyHoverEffect(exportXMLButton);
         exportXMLButton.setEnabled(false);
 
         buttonPanel.add(generateButton);
         buttonPanel.add(exportCSVButton);
         buttonPanel.add(exportXMLButton);
 
-        String[] columnNames = {"ID", "Pacient", "Medic", "Specializare", "Data și ora", "Serviciu", "Preț", "Status"};
+        // Set up the table with improved styling
+        String[] columnNames = {"ID", "Patient", "Doctor", "Specialization", "Date & Time", "Service", "Price", "Status"};
         reportTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Celulele nu sunt editabile
+                return false;
             }
         };
 
         reportTable = new JTable(reportTableModel);
+        UIStyler.styleTable(reportTable);
         reportTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         reportTable.getTableHeader().setReorderingAllowed(false);
 
+        // Create a styled scroll pane for the table
         scrollPane = new JScrollPane(reportTable);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         scrollPane.setPreferredSize(new Dimension(600, 200));
 
+        // Create chart panels
         chartPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        chartPanel.setBorder(BorderFactory.createTitledBorder("Statistici"));
+        chartPanel.setBackground(UIStyler.BACKGROUND_COLOR);
+        chartPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
 
         doctorChartPanel = new JPanel(new BorderLayout());
-        doctorChartPanel.setBorder(BorderFactory.createTitledBorder("Top medici"));
+        doctorChartPanel.setBackground(Color.WHITE);
+        doctorChartPanel.setBorder(BorderFactory.createTitledBorder("Top Doctors"));
 
         serviceChartPanel = new JPanel(new BorderLayout());
-        serviceChartPanel.setBorder(BorderFactory.createTitledBorder("Top servicii"));
+        serviceChartPanel.setBackground(Color.WHITE);
+        serviceChartPanel.setBorder(BorderFactory.createTitledBorder("Top Services"));
 
         chartPanel.add(doctorChartPanel);
         chartPanel.add(serviceChartPanel);
 
+        // Create error label
         errorLabel = new JLabel("");
-        errorLabel.setForeground(Color.RED);
+        errorLabel.setForeground(UIStyler.ACCENT_COLOR);
+        errorLabel.setFont(UIStyler.SMALL_FONT);
+        errorLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
+        // Set up file chooser
         fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Salvare raport");
+        fileChooser.setDialogTitle("Save Report");
 
+        // Create a top panel for control and buttons
         JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(UIStyler.BACKGROUND_COLOR);
         topPanel.add(controlPanel, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.SOUTH);
 
+        // Create a main content panel with card layout
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(UIStyler.BACKGROUND_COLOR);
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
+        contentPanel.add(chartPanel, BorderLayout.SOUTH);
+
+        // Add everything to the main panel
         mainPanel.add(topPanel, BorderLayout.NORTH);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(chartPanel, BorderLayout.SOUTH);
-        mainPanel.add(errorLabel, BorderLayout.PAGE_END);
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
+        mainPanel.add(errorLabel, BorderLayout.SOUTH);
     }
 
     public void displayDateRangeSelector() {
+        // This method is kept for compatibility with the original code
     }
 
     public void displayReportTable() {
+        // This method is kept for compatibility with the original code
     }
 
     public void displayExportOptions() {
-        // Activăm butoanele de export
+        // Enable export buttons
         exportCSVButton.setEnabled(true);
         exportXMLButton.setEnabled(true);
     }
@@ -191,19 +248,23 @@ public class ReportView {
             });
         }
 
-        JFreeChart doctorChart = createBarChart(report.getDoctorStatistics(), "Top medici solicitați");
+        // Create and display doctor chart
+        JFreeChart doctorChart = createBarChart(report.getDoctorStatistics(), "Top Requested Doctors");
         doctorChartPanel.removeAll();
         doctorChartPanel.add(new ChartPanel(doctorChart), BorderLayout.CENTER);
 
-        JFreeChart serviceChart = createBarChart(report.getServiceStatistics(), "Top servicii solicitate");
+        // Create and display service chart
+        JFreeChart serviceChart = createBarChart(report.getServiceStatistics(), "Top Requested Services");
         serviceChartPanel.removeAll();
         serviceChartPanel.add(new ChartPanel(serviceChart), BorderLayout.CENTER);
 
+        // Refresh the panels
         doctorChartPanel.revalidate();
         doctorChartPanel.repaint();
         serviceChartPanel.revalidate();
         serviceChartPanel.repaint();
 
+        // Enable export options
         displayExportOptions();
     }
 
@@ -213,7 +274,7 @@ public class ReportView {
         if (data != null) {
             int count = 0;
             for (Map.Entry<?, Long> entry : data.entrySet()) {
-                if (count >= 5) break;
+                if (count >= 5) break; // Limit to top 5 for better visualization
 
                 String name = "";
                 if (entry.getKey() instanceof Doctor) {
@@ -224,21 +285,33 @@ public class ReportView {
                     name = entry.getKey().toString();
                 }
 
-                dataset.addValue(entry.getValue(), "Programări", name);
+                dataset.addValue(entry.getValue(), "Appointments", name);
                 count++;
             }
         }
 
+        // Create an improved chart with better styling
         JFreeChart chart = ChartFactory.createBarChart(
                 title,
                 "",
-                "Număr programări",
+                "Number of Appointments",
                 dataset,
                 PlotOrientation.VERTICAL,
                 false,
                 true,
                 false
         );
+
+        // Customize chart appearance
+        chart.setBackgroundPaint(Color.WHITE);
+        chart.getTitle().setPaint(UIStyler.TEXT_COLOR);
+        chart.getTitle().setFont(UIStyler.HEADER_FONT);
+
+        // Customize plot
+        chart.getCategoryPlot().setBackgroundPaint(Color.WHITE);
+        chart.getCategoryPlot().setDomainGridlinePaint(Color.LIGHT_GRAY);
+        chart.getCategoryPlot().setRangeGridlinePaint(Color.LIGHT_GRAY);
+        chart.getCategoryPlot().getRenderer().setSeriesPaint(0, UIStyler.PRIMARY_COLOR);
 
         return chart;
     }

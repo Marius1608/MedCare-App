@@ -32,9 +32,9 @@ public class AuthConfig {
 
             try {
                 userRepository.save(adminUser);
-                System.out.println("Administrator creat cu succes! Username: admin, Parola: admin123");
+                System.out.println("Succes! Username: admin, Parola: admin123");
             } catch (Exception e) {
-                System.err.println("Eroare la crearea administratorului: " + e.getMessage());
+                System.err.println("Eroare !" + e.getMessage());
             }
         }
     }

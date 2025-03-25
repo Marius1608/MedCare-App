@@ -13,6 +13,7 @@ import java.util.Map;
 
 @Controller
 public class AdminDashboardController {
+
     private final AdminDashboardView adminDashboardView;
     private final UserManagementController userController;
     private final DoctorManagementController doctorController;

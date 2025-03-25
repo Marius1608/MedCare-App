@@ -98,11 +98,9 @@ public class ReportService {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.newDocument();
 
-        // Creează elementul rădăcină
         Element reportElement = document.createElement("report");
         document.appendChild(reportElement);
 
-        // Adaugă metadate
         Element metadataElement = document.createElement("metadata");
         reportElement.appendChild(metadataElement);
 
@@ -114,7 +112,6 @@ public class ReportService {
         endDateElement.setTextContent(report.getEndDate().format(DATE_FORMATTER));
         metadataElement.appendChild(endDateElement);
 
-        // Adaugă programările
         Element appointmentsElement = document.createElement("appointments");
         reportElement.appendChild(appointmentsElement);
 

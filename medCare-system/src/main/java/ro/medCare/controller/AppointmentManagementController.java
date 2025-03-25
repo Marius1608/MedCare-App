@@ -18,6 +18,7 @@ import java.util.List;
 
 @Controller
 public class AppointmentManagementController {
+
     private final AppointmentManagementView appointmentManagementView;
     private final AppointmentService appointmentService;
     private final DoctorService doctorService;
@@ -178,7 +179,7 @@ public class AppointmentManagementController {
             errorMessage.append("Selectați un serviciu medical!\n");
         }
 
-        if (errorMessage.length() > 0) {
+        if (!errorMessage.isEmpty()) {
             appointmentManagementView.displayErrorMessage(errorMessage.toString());
             return false;
         }

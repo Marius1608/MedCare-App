@@ -43,7 +43,7 @@ public class AppointmentManagementView {
 
     private Appointment selectedAppointment;
 
-    @Autowired
+    
     public AppointmentManagementView() {
         initialize();
     }
@@ -57,7 +57,7 @@ public class AppointmentManagementView {
         appointmentTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Celulele nu sunt editabile
+                return false;
             }
         };
 
@@ -152,7 +152,7 @@ public class AppointmentManagementView {
         createButton = new JButton("Crează programare");
         updateStatusButton = new JButton("Actualizează status");
         deleteButton = new JButton("Șterge programare");
-        clearButton = new JButton("Curăță formular");
+        clearButton = new JButton("Clear");
 
         updateStatusButton.setEnabled(false);
         deleteButton.setEnabled(false);

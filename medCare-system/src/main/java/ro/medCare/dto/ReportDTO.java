@@ -14,6 +14,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class ReportDTO {
 
     private List<Appointment> appointments;

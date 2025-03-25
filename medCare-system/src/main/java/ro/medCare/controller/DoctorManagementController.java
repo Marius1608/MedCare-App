@@ -14,9 +14,9 @@ import java.util.regex.Pattern;
 
 @Controller
 public class DoctorManagementController {
+
     private final DoctorManagementView doctorManagementView;
     private final DoctorService doctorService;
-
     private static final Pattern WORK_HOURS_PATTERN = Pattern.compile(
             "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$");
 
@@ -91,7 +91,6 @@ public class DoctorManagementController {
                 return;
             }
 
-            // Confirmarea ștergerii
             int option = JOptionPane.showConfirmDialog(
                     null,
                     "Sigur doriți să ștergeți medicul " + selectedDoctor.getName() + "?",
@@ -101,7 +100,6 @@ public class DoctorManagementController {
             if (option == JOptionPane.YES_OPTION) {
                 doctorService.deleteDoctor(selectedDoctor.getId());
 
-                // Actualizăm lista și curățăm formularul
                 refreshDoctorList();
                 doctorManagementView.displayDoctorForm();
                 doctorManagementView.displayErrorMessage("Medicul a fost șters cu succes!");

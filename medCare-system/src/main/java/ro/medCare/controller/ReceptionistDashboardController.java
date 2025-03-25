@@ -13,6 +13,7 @@ import java.util.Map;
 
 @Controller
 public class ReceptionistDashboardController {
+
     private final ReceptionistDashboardView receptionistDashboardView;
     private final AppointmentManagementController appointmentController;
     private final ApplicationContext context;

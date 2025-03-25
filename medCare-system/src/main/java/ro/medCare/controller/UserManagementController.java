@@ -70,7 +70,6 @@ public class UserManagementController {
 
             userService.updateUser(user);
 
-            // Actualizăm lista și curățăm formularul
             refreshUserList();
             userManagementView.displayUserForm();
             userManagementView.displayErrorMessage("Utilizatorul a fost actualizat cu succes!");

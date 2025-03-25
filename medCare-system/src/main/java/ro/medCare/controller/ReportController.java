@@ -14,6 +14,7 @@ import java.util.Date;
 
 @Controller
 public class ReportController {
+
     private final ReportView reportView;
     private final ReportService reportService;
     private ReportDTO currentReport;
@@ -55,7 +56,6 @@ public class ReportController {
 
             currentReport = reportService.generateReport(startDateTime, endDateTime);
 
-            // Afișăm raportul
             reportView.displayReport(currentReport);
             reportView.displayErrorMessage("Raport generat cu succes!");
         } catch (Exception ex) {

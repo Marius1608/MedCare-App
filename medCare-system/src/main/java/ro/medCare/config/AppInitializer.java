@@ -20,7 +20,6 @@ public class AppInitializer {
 
     @PostConstruct
     public void initializeApp() {
-        // Pornește aplicația cu LoginView
         SwingUtilities.invokeLater(() -> {
             LoginView loginView = context.getBean(LoginView.class);
             loginView.display();
