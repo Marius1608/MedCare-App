@@ -48,8 +48,7 @@ public class ReportController {
             LocalDateTime endDateTime = endDate.toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime()
-                    .plusDays(1)  // Adăugăm o zi pentru a include și sfârșitul zilei
-                    .withHour(0)
+                    .plusDays(1)
                     .withMinute(0)
                     .withSecond(0)
                     .withNano(0);

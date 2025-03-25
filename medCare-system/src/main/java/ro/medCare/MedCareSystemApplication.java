@@ -12,6 +12,7 @@ public class MedCareSystemApplication {
 
     public static void main(String[] args) {
         try {
+
             com.formdev.flatlaf.FlatLightLaf.install();
 
         } catch (Exception e) {

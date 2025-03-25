@@ -1,7 +1,6 @@
 package ro.medCare.view;
 
 import com.toedter.calendar.JDateChooser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ro.medCare.model.Appointment;
 import ro.medCare.model.AppointmentStatus;
@@ -20,7 +19,6 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 @Component
 public class AppointmentManagementView {
@@ -43,17 +41,16 @@ public class AppointmentManagementView {
 
     private Appointment selectedAppointment;
 
-    
     public AppointmentManagementView() {
         initialize();
     }
 
     private void initialize() {
-
-        mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel = new JPanel(new BorderLayout(5, 5));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        String[] columnNames = {"ID", "Pacient", "Medic", "Data și ora", "Serviciu", "Durată", "Status"};
+        // Set up table
+        String[] columnNames = {"ID", "Patient", "Doctor", "Date & Time", "Service", "Duration", "Status"};
         appointmentTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -80,32 +77,36 @@ public class AppointmentManagementView {
         scrollPane = new JScrollPane(appointmentTable);
         scrollPane.setPreferredSize(new Dimension(600, 300));
 
+        // Create form panel
         formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createTitledBorder("Detalii programare"));
+        formPanel.setBorder(BorderFactory.createTitledBorder("Appointment Details"));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        // Patient name field
         gbc.gridx = 0;
         gbc.gridy = 0;
-        formPanel.add(new JLabel("Nume pacient:"), gbc);
+        formPanel.add(new JLabel("Patient Name:"), gbc);
 
         gbc.gridx = 1;
         patientNameField = new JTextField(20);
         formPanel.add(patientNameField, gbc);
 
+        // Doctor field
         gbc.gridx = 0;
         gbc.gridy = 1;
-        formPanel.add(new JLabel("Medic:"), gbc);
+        formPanel.add(new JLabel("Doctor:"), gbc);
 
         gbc.gridx = 1;
         doctorComboBox = new JComboBox<>();
         formPanel.add(doctorComboBox, gbc);
 
+        // Date field
         gbc.gridx = 0;
         gbc.gridy = 2;
-        formPanel.add(new JLabel("Data:"), gbc);
+        formPanel.add(new JLabel("Date:"), gbc);
 
         gbc.gridx = 1;
         dateChooser = new JDateChooser();
@@ -113,9 +114,10 @@ public class AppointmentManagementView {
         dateChooser.setDate(new Date());
         formPanel.add(dateChooser, gbc);
 
+        // Time field
         gbc.gridx = 0;
         gbc.gridy = 3;
-        formPanel.add(new JLabel("Ora:"), gbc);
+        formPanel.add(new JLabel("Time:"), gbc);
 
         gbc.gridx = 1;
         SpinnerDateModel timeModel = new SpinnerDateModel();
@@ -130,14 +132,16 @@ public class AppointmentManagementView {
         timeSpinner.setValue(calendar.getTime());
         formPanel.add(timeSpinner, gbc);
 
+        // Service field
         gbc.gridx = 0;
         gbc.gridy = 4;
-        formPanel.add(new JLabel("Serviciu:"), gbc);
+        formPanel.add(new JLabel("Service:"), gbc);
 
         gbc.gridx = 1;
         serviceComboBox = new JComboBox<>();
         formPanel.add(serviceComboBox, gbc);
 
+        // Status field
         gbc.gridx = 0;
         gbc.gridy = 5;
         formPanel.add(new JLabel("Status:"), gbc);
@@ -147,11 +151,12 @@ public class AppointmentManagementView {
         statusComboBox.setSelectedItem(AppointmentStatus.NEW);
         formPanel.add(statusComboBox, gbc);
 
+        // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        createButton = new JButton("Crează programare");
-        updateStatusButton = new JButton("Actualizează status");
-        deleteButton = new JButton("Șterge programare");
+        createButton = new JButton("Create Appointment");
+        updateStatusButton = new JButton("Update Status");
+        deleteButton = new JButton("Delete Appointment");
         clearButton = new JButton("Clear");
 
         updateStatusButton.setEnabled(false);
@@ -162,11 +167,14 @@ public class AppointmentManagementView {
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
 
+        // Error label
         errorLabel = new JLabel("");
         errorLabel.setForeground(Color.RED);
 
+        // Add clear button functionality
         clearButton.addActionListener(e -> clearForm());
 
+        // Assemble all panels
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(formPanel, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -209,7 +217,7 @@ public class AppointmentManagementView {
         appointment.setPatientName(patientNameField.getText());
         appointment.setDoctor((Doctor) doctorComboBox.getSelectedItem());
 
-        // Combinăm data și ora pentru a obține LocalDateTime
+        // Combine date and time to get LocalDateTime
         Date selectedDate = dateChooser.getDate();
         Date selectedTime = (Date) timeSpinner.getValue();
 
@@ -270,7 +278,6 @@ public class AppointmentManagementView {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
         for (Appointment appointment : appointments) {
-            // Convertim LocalDateTime în Date pentru afișare formatată
             Date date = Date.from(appointment.getDateTime().atZone(ZoneId.systemDefault()).toInstant());
             String formattedDate = dateFormat.format(date);
 
@@ -294,11 +301,22 @@ public class AppointmentManagementView {
         return mainPanel;
     }
 
+    public Long getSelectedAppointmentId() {
+        int selectedRow = appointmentTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            return Long.parseLong(appointmentTable.getValueAt(selectedRow, 0).toString());
+        }
+        return null;
+    }
+
+    public AppointmentStatus getSelectedStatus() {
+        return (AppointmentStatus) statusComboBox.getSelectedItem();
+    }
+
     public void setSelectedAppointment(Appointment appointment) {
         this.selectedAppointment = appointment;
 
         if (appointment != null) {
-
             patientNameField.setText(appointment.getPatientName());
 
             for (int i = 0; i < doctorComboBox.getItemCount(); i++) {
@@ -326,17 +344,5 @@ public class AppointmentManagementView {
             updateStatusButton.setEnabled(true);
             deleteButton.setEnabled(true);
         }
-    }
-
-    public Long getSelectedAppointmentId() {
-        int selectedRow = appointmentTable.getSelectedRow();
-        if (selectedRow >= 0) {
-            return Long.parseLong(appointmentTable.getValueAt(selectedRow, 0).toString());
-        }
-        return null;
-    }
-
-    public AppointmentStatus getSelectedStatus() {
-        return (AppointmentStatus) statusComboBox.getSelectedItem();
     }
 }

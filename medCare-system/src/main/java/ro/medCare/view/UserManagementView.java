@@ -1,7 +1,5 @@
 package ro.medCare.view;
 
-import ro.medCare.util.UIStyler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ro.medCare.model.User;
 import ro.medCare.model.UserRole;
@@ -33,22 +31,15 @@ public class UserManagementView {
 
     private User selectedUser;
 
-
     public UserManagementView() {
         initialize();
     }
 
     private void initialize() {
-        // Initialize the main panel with BorderLayout
-        mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBackground(UIStyler.BACKGROUND_COLOR);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        mainPanel = new JPanel(new BorderLayout(5, 5));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Add a title panel at the top
-        JPanel titlePanel = UIStyler.createTitlePanel("User Management");
-        mainPanel.add(titlePanel, BorderLayout.NORTH);
-
-        // Set up the table with improved styling
+        // Set up table
         String[] columnNames = {"ID", "Name", "Username", "Role"};
         userTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -58,11 +49,9 @@ public class UserManagementView {
         };
 
         userTable = new JTable(userTableModel);
-        UIStyler.styleTable(userTable);
         userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         userTable.getTableHeader().setReorderingAllowed(false);
 
-        // Add mouse listener for row selection
         userTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -77,7 +66,7 @@ public class UserManagementView {
                     selectedUser.setId(id);
                     selectedUser.setName(name);
                     selectedUser.setUsername(username);
-                    selectedUser.setPassword(""); // Password is not displayed
+                    selectedUser.setPassword(""); // Password not displayed
                     selectedUser.setRole(role);
 
                     populateForm(selectedUser);
@@ -87,143 +76,90 @@ public class UserManagementView {
             }
         });
 
-        // Create a styled scroll pane for the table
         scrollPane = new JScrollPane(userTable);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        scrollPane.setPreferredSize(new Dimension(600, 300));
 
-        // Create a container for the form and buttons
-        JPanel formContainer = new JPanel(new BorderLayout(10, 10));
-        formContainer.setBackground(UIStyler.BACKGROUND_COLOR);
-
-        // Create the form panel with improved styling
+        // Create form panel
         formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(Color.WHITE);
-        formPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("User Details"),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        formPanel.setBorder(BorderFactory.createTitledBorder("User Details"));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
 
         // Name field
-        JLabel nameLabel = new JLabel("Name:");
-        UIStyler.styleLabel(nameLabel);
         gbc.gridx = 0;
         gbc.gridy = 0;
-        formPanel.add(nameLabel, gbc);
+        formPanel.add(new JLabel("Name:"), gbc);
 
-        nameField = new JTextField(20);
-        nameField.setFont(UIStyler.REGULAR_FONT);
         gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
+        nameField = new JTextField(20);
         formPanel.add(nameField, gbc);
 
         // Username field
-        JLabel usernameLabel = new JLabel("Username:");
-        UIStyler.styleLabel(usernameLabel);
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        formPanel.add(usernameLabel, gbc);
+        formPanel.add(new JLabel("Username:"), gbc);
 
-        usernameField = new JTextField(20);
-        usernameField.setFont(UIStyler.REGULAR_FONT);
         gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
+        usernameField = new JTextField(20);
         formPanel.add(usernameField, gbc);
 
         // Password field
-        JLabel passwordLabel = new JLabel("Password:");
-        UIStyler.styleLabel(passwordLabel);
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        formPanel.add(passwordLabel, gbc);
+        formPanel.add(new JLabel("Password:"), gbc);
 
-        passwordField = new JPasswordField(20);
-        passwordField.setFont(UIStyler.REGULAR_FONT);
         gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
+        passwordField = new JPasswordField(20);
         formPanel.add(passwordField, gbc);
 
         // Role field
-        JLabel roleLabel = new JLabel("Role:");
-        UIStyler.styleLabel(roleLabel);
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.gridwidth = 1;
-        formPanel.add(roleLabel, gbc);
+        formPanel.add(new JLabel("Role:"), gbc);
 
-        roleComboBox = new JComboBox<>(UserRole.values());
-        roleComboBox.setFont(UIStyler.REGULAR_FONT);
         gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
+        roleComboBox = new JComboBox<>(UserRole.values());
         formPanel.add(roleComboBox, gbc);
 
-        // Create a panel for buttons with improved styling
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.setBackground(UIStyler.BACKGROUND_COLOR);
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        // Create styled buttons
         addButton = new JButton("Add");
-        UIStyler.styleSuccessButton(addButton);
-        UIStyler.applyHoverEffect(addButton);
-
         updateButton = new JButton("Update");
-        UIStyler.styleButton(updateButton);
-        UIStyler.applyHoverEffect(updateButton);
-        updateButton.setEnabled(false);
-
         deleteButton = new JButton("Delete");
-        UIStyler.styleDangerButton(deleteButton);
-        UIStyler.applyHoverEffect(deleteButton);
+        clearButton = new JButton("Clear");
+
+        updateButton.setEnabled(false);
         deleteButton.setEnabled(false);
 
-        clearButton = new JButton("Clear");
-        UIStyler.styleWarningButton(clearButton);
-        UIStyler.applyHoverEffect(clearButton);
-
-        // Add buttons to the panel
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
 
-        // Add the clear functionality
+        // Error label
+        errorLabel = new JLabel("");
+        errorLabel.setForeground(Color.RED);
+
+        // Add clear button functionality
         clearButton.addActionListener(e -> clearForm());
 
-        // Create error label at the bottom
-        errorLabel = new JLabel("");
-        errorLabel.setForeground(UIStyler.ACCENT_COLOR);
-        errorLabel.setFont(UIStyler.SMALL_FONT);
-        errorLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        // Assemble all panels
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(formPanel, BorderLayout.CENTER);
+        topPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Add components to the container
-        formContainer.add(formPanel, BorderLayout.NORTH);
-        formContainer.add(buttonPanel, BorderLayout.CENTER);
-        formContainer.add(errorLabel, BorderLayout.SOUTH);
-
-        // Create a split pane for form and table
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, formContainer, scrollPane);
-        splitPane.setDividerLocation(300);
-        splitPane.setDividerSize(5);
-        splitPane.setContinuousLayout(true);
-        splitPane.setBorder(null);
-
-        // Add the split pane to the main panel
-        mainPanel.add(splitPane, BorderLayout.CENTER);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(errorLabel, BorderLayout.SOUTH);
     }
 
     private void populateForm(User user) {
         nameField.setText(user.getName());
         usernameField.setText(user.getUsername());
-        passwordField.setText(""); // Do not populate password for security reasons
+        passwordField.setText(""); // Do not populate password for security
         roleComboBox.setSelectedItem(user.getRole());
     }
 
@@ -244,7 +180,7 @@ public class UserManagementView {
     }
 
     public void displayUserList() {
-        // This method is kept for compatibility with the original code
+        // Method kept for compatibility
     }
 
     public User getUserFormData() {

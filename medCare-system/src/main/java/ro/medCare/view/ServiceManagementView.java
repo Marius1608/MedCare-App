@@ -1,7 +1,5 @@
 package ro.medCare.view;
 
-import ro.medCare.util.UIStyler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ro.medCare.model.MedicalService;
 
@@ -31,22 +29,15 @@ public class ServiceManagementView {
 
     private MedicalService selectedService;
 
-
     public ServiceManagementView() {
         initialize();
     }
 
     private void initialize() {
-        // Initialize the main panel with BorderLayout
-        mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBackground(UIStyler.BACKGROUND_COLOR);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        mainPanel = new JPanel(new BorderLayout(5, 5));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Add a title panel at the top
-        JPanel titlePanel = UIStyler.createTitlePanel("Medical Service Management");
-        mainPanel.add(titlePanel, BorderLayout.NORTH);
-
-        // Set up the table with improved styling
+        // Set up table
         String[] columnNames = {"ID", "Name", "Price (RON)", "Duration (min)"};
         serviceTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -56,11 +47,9 @@ public class ServiceManagementView {
         };
 
         serviceTable = new JTable(serviceTableModel);
-        UIStyler.styleTable(serviceTable);
         serviceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         serviceTable.getTableHeader().setReorderingAllowed(false);
 
-        // Add mouse listener for row selection
         serviceTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -84,122 +73,75 @@ public class ServiceManagementView {
             }
         });
 
-        // Create a styled scroll pane for the table
         scrollPane = new JScrollPane(serviceTable);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        scrollPane.setPreferredSize(new Dimension(600, 300));
 
-        // Create a container for the form and buttons
-        JPanel formContainer = new JPanel(new BorderLayout(10, 10));
-        formContainer.setBackground(UIStyler.BACKGROUND_COLOR);
-
-        // Create the form panel with improved styling
+        // Create form panel
         formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(Color.WHITE);
-        formPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("Service Details"),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        formPanel.setBorder(BorderFactory.createTitledBorder("Service Details"));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
 
-        // Service name field
-        JLabel nameLabel = new JLabel("Service Name:");
-        UIStyler.styleLabel(nameLabel);
+        // Name field
         gbc.gridx = 0;
         gbc.gridy = 0;
-        formPanel.add(nameLabel, gbc);
+        formPanel.add(new JLabel("Service Name:"), gbc);
 
-        nameField = new JTextField(20);
-        nameField.setFont(UIStyler.REGULAR_FONT);
         gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
+        nameField = new JTextField(20);
         formPanel.add(nameField, gbc);
 
         // Price field
-        JLabel priceLabel = new JLabel("Price (RON):");
-        UIStyler.styleLabel(priceLabel);
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        formPanel.add(priceLabel, gbc);
+        formPanel.add(new JLabel("Price (RON):"), gbc);
 
-        priceField = new JTextField(20);
-        priceField.setFont(UIStyler.REGULAR_FONT);
         gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
+        priceField = new JTextField(20);
         formPanel.add(priceField, gbc);
 
         // Duration field
-        JLabel durationLabel = new JLabel("Duration (minutes):");
-        UIStyler.styleLabel(durationLabel);
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        formPanel.add(durationLabel, gbc);
+        formPanel.add(new JLabel("Duration (minutes):"), gbc);
 
-        durationField = new JTextField(20);
-        durationField.setFont(UIStyler.REGULAR_FONT);
         gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
+        durationField = new JTextField(20);
         formPanel.add(durationField, gbc);
 
-        // Create a panel for buttons with improved styling
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.setBackground(UIStyler.BACKGROUND_COLOR);
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        // Create styled buttons
         addButton = new JButton("Add");
-        UIStyler.styleSuccessButton(addButton);
-        UIStyler.applyHoverEffect(addButton);
-
         updateButton = new JButton("Update");
-        UIStyler.styleButton(updateButton);
-        UIStyler.applyHoverEffect(updateButton);
-        updateButton.setEnabled(false);
-
         deleteButton = new JButton("Delete");
-        UIStyler.styleDangerButton(deleteButton);
-        UIStyler.applyHoverEffect(deleteButton);
+        clearButton = new JButton("Clear");
+
+        updateButton.setEnabled(false);
         deleteButton.setEnabled(false);
 
-        clearButton = new JButton("Clear");
-        UIStyler.styleWarningButton(clearButton);
-        UIStyler.applyHoverEffect(clearButton);
-
-        // Add buttons to the panel
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
 
-        // Add the clear functionality
+        // Error label
+        errorLabel = new JLabel("");
+        errorLabel.setForeground(Color.RED);
+
+        // Add clear button functionality
         clearButton.addActionListener(e -> clearForm());
 
-        // Create error label at the bottom
-        errorLabel = new JLabel("");
-        errorLabel.setForeground(UIStyler.ACCENT_COLOR);
-        errorLabel.setFont(UIStyler.SMALL_FONT);
-        errorLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        // Assemble all panels
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(formPanel, BorderLayout.CENTER);
+        topPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Add components to the container
-        formContainer.add(formPanel, BorderLayout.NORTH);
-        formContainer.add(buttonPanel, BorderLayout.CENTER);
-        formContainer.add(errorLabel, BorderLayout.SOUTH);
-
-        // Create a split pane for form and table
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, formContainer, scrollPane);
-        splitPane.setDividerLocation(250);
-        splitPane.setDividerSize(5);
-        splitPane.setContinuousLayout(true);
-        splitPane.setBorder(null);
-
-        // Add the split pane to the main panel
-        mainPanel.add(splitPane, BorderLayout.CENTER);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(errorLabel, BorderLayout.SOUTH);
     }
 
     private void populateForm(MedicalService service) {
@@ -224,7 +166,7 @@ public class ServiceManagementView {
     }
 
     public void displayServiceList() {
-        // This method is kept for compatibility with the original code
+        // Method kept for compatibility
     }
 
     public MedicalService getServiceFormData() {
